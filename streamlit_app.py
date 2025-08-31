@@ -74,38 +74,34 @@ if st.button("Start Workflow"):
         temp_files_to_cleanup = []
         
         # -------- PDF → AI Voice --------
-        if option in ["1️⃣ Convert PDF → AI Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file:
-            if not os.path.exists("book_text.txt"):
-                # Use direct function call instead of subprocess
-                extract_text("uploaded_book.pdf", "book_text.txt")
+        # In your workflow section:
+if option in ["1️⃣ Convert PDF → AI Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file:
+    if not os.path.exists("book_text.txt"):
+        extract_text("uploaded_book.pdf", "book_text.txt")
+    
+    if os.path.exists("book_text.txt"):
+        try:
+            full_text = read_text("book_text.txt")
+            audio_data = text_to_speech_fast(full_text)  # Now returns audio data directly
             
-            if os.path.exists("book_text.txt"):
-                # Use direct function call instead of subprocess
-                try:
-                    full_text = read_text("book_text.txt")
-                    # Generate audio and get bytes
-                    text_to_speech_fast(full_text, "/tmp/book_audio.mp3")
-                    
-                    st.success("✅ AI voice conversion completed!")
-                    
-                    # Play audio directly from /tmp/
-                    with open("/tmp/book_audio.mp3", "rb") as f:
-                        audio_bytes = f.read()
-                    
-                    st.audio(audio_bytes, format="audio/mp3")
-                    
-                    # Download button
-                    st.download_button(
-                        "Download AI Voice Audiobook",
-                        audio_bytes,
-                        "ai_voice_audiobook.mp3",
-                        "audio/mp3"
-                    )
-                    
-                    temp_files_to_cleanup.append("/tmp/book_audio.mp3")
-                    
-                except Exception as e:
-                    st.error(f"Audio generation failed: {e}")
+            if audio_data:
+                st.success("✅ AI voice conversion completed!")
+                
+                # Play audio directly from memory
+                st.audio(audio_data, format="audio/mp3")
+                
+                # Download button
+                st.download_button(
+                    "Download AI Voice Audiobook",
+                    audio_data,
+                    "ai_voice_audiobook.mp3",
+                    "audio/mp3"
+                )
+            else:
+                st.error("❌ Failed to generate audio")
+                
+        except Exception as e:
+            st.error(f"Audio generation failed: {e}")
 
         # -------- PDF → Your Voice --------
         if option in ["2️⃣ Convert PDF → Your Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file and voice_file:
