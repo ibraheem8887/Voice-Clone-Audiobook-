@@ -1,13 +1,16 @@
-# file: pyttsx3_audiobook_fast.py
+# file: gtts_audiobook_fast.py
 
-import pyttsx3
 import os
-import time
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
+import time
+import io
+from gtts import gTTS
+
+sys.stdout.reconfigure(encoding="utf-8")
 
 TEXT_FILE = "book_text.txt"
 OUTPUT_AUDIO = "book_audio.mp3"
+
 
 def read_text(file_path):
     if not os.path.exists(file_path):
@@ -15,24 +18,25 @@ def read_text(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
 
+
 def text_to_speech_fast(text, output_file):
-    engine = pyttsx3.init()
-
-    # Adjust voice and speed
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[0].id)  # 0=male, 1=female
-    engine.setProperty('rate', 150)            # words per minute
-
     print("🔊 Starting audiobook conversion for entire book...")
 
     start_time = time.time()
-    engine.save_to_file(text, output_file)
-    engine.runAndWait()
-    elapsed = time.time() - start_time
+    tts = gTTS(text=text, lang="en")
+    tts.save(output_file)  # Save locally for compatibility
 
+    elapsed = time.time() - start_time
     print(f"✅ Audiobook completed and saved as {output_file}")
     print(f"⏱ Total time taken: {int(elapsed // 60)} min {int(elapsed % 60)} sec")
 
+    # Also return as in-memory bytes (for Streamlit)
+    bio = io.BytesIO()
+    tts.write_to_fp(bio)
+    bio.seek(0)
+    return bio
+
+
 if __name__ == "__main__":
     full_text = read_text(TEXT_FILE)
-    text_to_speech_fast(full_text, OUTPUT_AUDIO)
+    audio_bytes = text_to_speech_fast(full_text, OUTPUT_AUDIO)
