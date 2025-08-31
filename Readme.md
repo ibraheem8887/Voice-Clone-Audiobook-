@@ -27,7 +27,7 @@ Convert **PDFs or audio files into audiobooks** with **AI voices** or **your clo
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/voice-clone-audiobook-creator.git
+git clone https://github.com/ibraheem8887/voice-clone-audiobook-.git
 cd voice-clone-audiobook-creator
 ```
 
@@ -80,27 +80,7 @@ python model_repair.py
 3. **Audio → Your Voice** – Convert existing audio into your voice  
 4. **PDF → AI Voice → Your Voice** – Generate both AI and custom voice versions  
 
----
 
-## 📁 Project Structure
-
-```text
-voice-clone-audiobook-creator/
-├── streamlit_app.py          # Main web interface
-├── extract_pdf_text.py       # PDF text extraction
-├── audio_to_text.py          # Audio transcription
-├── convert_to_aiVoice.py     # AI voice generation
-├── convert_to_myVoice.py     # Voice cloning module
-├── merge_audio.py            # Audio chunk merging
-├── model_repair.py           # Model download utility
-├── myVoice/                  # Voice samples directory
-│   └── myVoice.wav           # Your voice sample
-├── audio_chunks/             # Generated audio chunks
-├── book_text.txt             # Extracted text
-├── book_audio.mp3            # AI-generated audiobook
-├── my_voice_audiobook.wav    # Voice-cloned audiobook
-└── requirements.txt          # Python dependencies
-```
 
 ---
 
@@ -135,50 +115,4 @@ python model_repair.py
 - 📖 Split large documents into smaller sections  
 
 ---
-
-## 📊 Sample Processing Times
-
-| Document Size | AI Voice | Your Voice |
-|---------------|----------|------------|
-| 10 pages      | ~1 min   | ~15–30 min |
-| 50 pages      | ~5 min   | ~60–90 min |
-| 100 pages     | ~10 min  | ~2–3 hours |
-
-> ⏱️ *Note: Voice cloning time depends heavily on your hardware*  
-
----
-
-## 🤝 Contributing
-
-1. Fork the project  
-2. Create your feature branch → `git checkout -b feature/AmazingFeature`  
-3. Commit your changes → `git commit -m 'Add some AmazingFeature'`  
-4. Push to branch → `git push origin feature/AmazingFeature`  
-5. Open a Pull Request  
-
----
-
-## 📝 License
-
-This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.  
-
----
-
-## 🙏 Acknowledgments
-
-- [Coqui AI](https://github.com/coqui-ai/TTS) – TTS library & voice cloning  
-- Google Speech Recognition API  
-- Streamlit framework  
-- All contributors & open-source libraries  
-
----
-
-## 📞 Support
-
-If you encounter any issues:  
-- Check the **Troubleshooting** section above  
-- Review code comments in each module  
-- Open an issue on the GitHub repository  
-
-> ⚠️ **Note**: This software is for personal use only. Ensure you have the rights to any content you process.
 
