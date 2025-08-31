@@ -18,7 +18,7 @@ option = st.radio(
     "Select Workflow:",
     [
         "1️⃣ Convert PDF → AI Voice",
-        "2️⃣ Convert PDF → Your Voice",
+        "2️⃣ Convert PDF → Your Voice", 
         "3️⃣ Convert Audio → Your Voice",
         "4️⃣ Full Process (PDF → AI Voice → Your Voice)"
     ]

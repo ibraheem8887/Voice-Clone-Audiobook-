@@ -1,4 +1,3 @@
-# File: voice_cloning_fixed.py
 import os
 import sys
 import time
@@ -106,6 +105,9 @@ def true_voice_cloning():
         return audio_buffers  # return list of BytesIO chunks
     else:
         print("❌ No chunks created")
+        print("💡 This is likely due to Python version incompatibility")
+        print("   TTS requires Python 3.9-3.11, but this is Python 3.13.6")
+        print("   Add a 'runtime.txt' file with: python-3.11.9")
         return False
 
 
