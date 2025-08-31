@@ -1,4 +1,3 @@
-# audio_to_text.py (Cloud + Streamlit friendly)
 import os
 import tempfile
 import speech_recognition as sr
@@ -14,6 +13,8 @@ def audio_to_text(audio_file, output_txt=None, chunk_length_ms=60000):
     recognizer = sr.Recognizer()
     if output_txt is None:
         output_txt = os.path.join(tempfile.gettempdir(), "book_text.txt")
+
+    temp_wav = None   # ✅ Ensure it's always defined
 
     try:
         # ✅ Always convert to mono 16kHz WAV for best results
@@ -50,5 +51,5 @@ def audio_to_text(audio_file, output_txt=None, chunk_length_ms=60000):
         print(f"❌ Unexpected error: {e}")
         return None
     finally:
-        if os.path.exists(temp_wav):
+        if temp_wav and os.path.exists(temp_wav):  # ✅ Only delete if defined & exists
             os.remove(temp_wav)
