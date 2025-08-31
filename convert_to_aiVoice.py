@@ -7,7 +7,7 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
 TEXT_FILE = "book_text.txt"
-OUTPUT_AUDIO = "book_audio.mp3"
+OUTPUT_AUDIO = "/tmp/book_audio.mp3"
 
 def read_text(file_path):
     if not os.path.exists(file_path):
