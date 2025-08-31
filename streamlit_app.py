@@ -104,7 +104,7 @@ if st.button("Start Workflow"):
 
             # Convert uploaded audio → text
             from audio_to_text import audio_to_text
-            success = audio_to_text(audio_path, book_text_path, minutes=5)
+            success = audio_to_text(audio_path, book_text_path)
 
             if not success:
                 st.error("❌ Audio-to-text conversion failed.")
