@@ -1,0 +1,7 @@
+TTS
+SpeechRecognition
+pydub
+pyttsx3
+PyPDF2
+requests
+streamlit
