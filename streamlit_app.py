@@ -3,7 +3,7 @@ import os
 import io
 import sys
 import tempfile
-from extract_pdf_text import text_to_speech_fast, read_text
+from convert_to_aiVoice import text_to_speech_fast, read_text
 from convert_to_myVoice import true_voice_cloning
 from merge_audio import merge_audio_chunks_memory
 
