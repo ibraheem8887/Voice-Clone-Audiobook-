@@ -3,9 +3,9 @@ import os
 import io
 import sys
 import tempfile
-from pyttsx3_audiobook_fast import text_to_speech_fast, read_text
-from voice_cloning_fixed import true_voice_cloning
-from merge_audio_chunks_memory import merge_audio_chunks_memory
+from extract_pdf_text import text_to_speech_fast, read_text
+from convert_to_myVoice import true_voice_cloning
+from merge_audio import merge_audio_chunks_memory
 
 st.set_page_config(page_title="Voice Clone Audiobook Creator", page_icon="🎧")
 st.title("🎧 Voice Clone Audiobook Creator")
