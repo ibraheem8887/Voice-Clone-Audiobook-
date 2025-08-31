@@ -47,18 +47,18 @@ if st.button("Start Workflow"):
         TMP_DIR = tempfile.mkdtemp()
         book_text_path = os.path.join(TMP_DIR, "book_text.txt")
 
-        # -------- PDF → AI Voice --------
-        if option in ["1️⃣ Convert PDF → AI Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file:
+        # -------- Always extract PDF text if a PDF is uploaded --------
+        if pdf_file:
             pdf_bytes = pdf_file.read()
             pdf_path = os.path.join(TMP_DIR, "uploaded_book.pdf")
             with open(pdf_path, "wb") as f:
                 f.write(pdf_bytes)
 
-            # Extract text
             from extract_pdf_text import extract_text
             extract_text(pdf_path, book_text_path)
 
-            # AI Voice conversion
+        # -------- PDF → AI Voice --------
+        if option in ["1️⃣ Convert PDF → AI Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file:
             full_text = read_text(book_text_path)
             ai_audio_path = os.path.join(TMP_DIR, "book_audio.mp3")
             text_to_speech_fast(full_text, ai_audio_path)
@@ -72,15 +72,19 @@ if st.button("Start Workflow"):
         if option in ["2️⃣ Convert PDF → Your Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file and voice_file:
             # Save voice sample
             voice_path = os.path.join(TMP_DIR, "myVoice.wav")
-            os.makedirs(os.path.dirname(voice_path), exist_ok=True)
             with open(voice_path, "wb") as f:
                 f.write(voice_file.read())
 
-            # Generate voice chunks
+            # Generate cloned chunks
             chunks_bytes_list = true_voice_cloning(text_file=book_text_path, voice_file=voice_path)
 
             if chunks_bytes_list:
-                merged_audio = merge_audio_chunks_memory(chunks_bytes_list, output_file=os.path.join(TMP_DIR,"my_voice_audiobook.wav"), export_format="wav", save_to_disk=True)
+                merged_audio = merge_audio_chunks_memory(
+                    chunks_bytes_list,
+                    output_file=os.path.join(TMP_DIR,"my_voice_audiobook.wav"),
+                    export_format="wav",
+                    save_to_disk=True
+                )
                 st.success("✅ Your voice audiobook completed!")
                 st.audio(merged_audio, format="audio/wav")
                 merged_audio.seek(0)
@@ -88,8 +92,7 @@ if st.button("Start Workflow"):
 
         # -------- Audio → Your Voice --------
         if option == "3️⃣ Convert Audio → Your Voice" and audio_file and voice_file:
-            # TODO: integrate audio_to_text function here if available
-            st.warning("Audio → Your Voice workflow not fully implemented in cloud-ready version")
+            st.warning("⚠️ Audio → Your Voice workflow not implemented yet (need audio-to-text step).")
 
     except Exception as e:
         st.error(f"Workflow failed: {str(e)}")
