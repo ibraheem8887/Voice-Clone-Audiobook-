@@ -106,9 +106,14 @@ if st.button("Start Workflow"):
             from audio_to_text import audio_to_text
             success = audio_to_text(audio_path, book_text_path)
 
-            if not success:
+            if not success or not os.path.exists(book_text_path):
                 st.error("❌ Audio-to-text conversion failed.")
             else:
+                st.success("✅ Audio successfully transcribed!")
+                with open(book_text_path, "r", encoding="utf-8") as f:
+                    transcribed_text = f.read()
+                st.text_area("📖 Transcribed Text Preview", transcribed_text[:2000], height=200)
+
                 # Generate audiobook in user's voice
                 chunks_bytes_list = true_voice_cloning(text_file=book_text_path, voice_file=voice_path)
 
