@@ -1,19 +1,8 @@
-# Core
 streamlit==1.36.0
-
-# PDF processing
+rich==13.9.4
 PyPDF2==3.0.1
-
-# Speech processing
 SpeechRecognition==3.10.4
 pydub==0.25.1
 pyttsx3==2.90
-
-# gTTS for cloud-friendly AI voice TTS
-gTTS==2.4.2
-
-# Coqui TTS (voice cloning)
+gTTS==2.5.4
 git+https://github.com/coqui-ai/TTS@v0.22.0
-
-# Optional: FFmpeg for audio merging (if using ffmpeg method)
-ffmpeg-python==0.2.0
