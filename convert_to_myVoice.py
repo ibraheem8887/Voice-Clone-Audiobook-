@@ -1,22 +1,18 @@
-# File: voice_cloning_fixed.py
 import os
 import sys
-
+import time
+import shutil
 
 # Force UTF-8 encoding for prints
 os.environ['PYTHONIOENCODING'] = 'utf-8'
 sys.stdout.reconfigure(encoding='utf-8')
-import time
-import shutil
-from TTS.api import TTS
-
 
 def true_voice_cloning():
-    # Configuration
+    # Configuration - REDUCED chunk size for cloud compatibility
     INPUT_TEXT = "book_text.txt"
     VOICE_FILE = "myVoice/myVoice.wav"
     AUDIO_DIR = "audio_chunks"
-    CHUNK_SIZE = 400
+    CHUNK_SIZE = 150  # Reduced from 400 for cloud stability
     
     print("🎯 VOICE CLONING WITH YOUR VOICE")
     print("=" * 50)
@@ -42,7 +38,7 @@ def true_voice_cloning():
         print(f"❌ Error reading file: {e}")
         return False
     
-    # Split text into chunks
+    # Split text into chunks (smaller for cloud stability)
     words = full_text.split()
     chunks = []
     for i in range(0, len(words), CHUNK_SIZE):
@@ -51,23 +47,37 @@ def true_voice_cloning():
     
     print(f"✂️  Split into {len(chunks)} chunks")
     
-    # Initialize TTS - try multiple approaches
+    # Initialize TTS with better error handling
     try:
         print("🔊 Downloading YourTTS model (this will take a while)...")
         
-        # First, ensure any corrupted files are gone
-        model_path = os.path.expanduser("~/.local/share/tts/tts_models--multilingual--multi-dataset--your_tts")
-        if os.path.exists(model_path):
-            shutil.rmtree(model_path)
-            print("🧹 Cleared old model files")
+        # Clear cache - use a more robust approach
+        cache_paths = [
+            os.path.expanduser("~/.local/share/tts"),
+            os.path.expanduser("~/.cache/tts"),
+            os.path.join(os.getcwd(), "tts_cache")
+        ]
         
-        # Now download fresh
-        tts = TTS("tts_models/multilingual/multi-dataset/your_tts", gpu=False)
+        for cache_path in cache_paths:
+            if os.path.exists(cache_path):
+                shutil.rmtree(cache_path, ignore_errors=True)
+                print(f"🧹 Cleared: {cache_path}")
+        
+        # Set custom cache directory
+        custom_cache = os.path.join(os.getcwd(), "tts_models")
+        os.makedirs(custom_cache, exist_ok=True)
+        os.environ["TTS_HOME"] = custom_cache
+        
+        # Now download fresh with progress indication
+        tts = TTS("tts_models/multilingual/multi-dataset/your_tts", 
+                 progress_bar=True, gpu=False)
         print("✅ YourTTS model loaded successfully!")
         
     except Exception as e:
         print(f"❌ Failed to load YourTTS: {e}")
-        print("🔄 Trying alternative approach...")
+        print("💡 This is likely a Python version issue.")
+        print("   TTS requires Python 3.9-3.11, but this environment uses Python 3.13.6")
+        print("   Add a 'runtime.txt' file with: python-3.11.9")
         return False
     
     # Test with small sample
@@ -84,16 +94,21 @@ def true_voice_cloning():
         print(f"❌ Voice test failed: {e}")
         return False
     
-    # Process all chunks
+    # Process all chunks with better error handling
     print(f"\n🎵 Creating {len(chunks)} chunks with YOUR voice...")
     successful_chunks = 0
     
     for i, chunk in enumerate(chunks):
-        output_path = os.path.join(AUDIO_DIR, f"chunk_{i}.mp3")
+        output_path = os.path.join(AUDIO_DIR, f"chunk_{i}.wav")  # Changed to WAV for consistency
         
-        print(f"[{i+1}/{len(chunks)}] Processing...")
+        print(f"[{i+1}/{len(chunks)}] Processing {len(chunk)} characters...")
         
         try:
+            # Skip empty chunks
+            if not chunk.strip():
+                print(f"⚠️  Skipping empty chunk {i+1}")
+                continue
+                
             tts.tts_to_file(
                 text=chunk,
                 speaker_wav=VOICE_FILE,
@@ -101,12 +116,14 @@ def true_voice_cloning():
                 file_path=output_path
             )
             successful_chunks += 1
-            print(f"✅ Saved: chunk_{i}.mp3")
+            print(f"✅ Saved: chunk_{i}.wav")
             
-            time.sleep(1)
+            # Smaller delay for cloud environment
+            time.sleep(0.5)
             
         except Exception as e:
             print(f"❌ Failed chunk {i+1}: {e}")
+            # Try to continue with next chunk
             continue
     
     # Results
@@ -118,6 +135,9 @@ def true_voice_cloning():
         return True
     else:
         print("❌ No chunks created")
+        print("💡 This is likely due to Python version incompatibility")
+        print("   TTS requires Python 3.9-3.11, but this is Python 3.13.6")
+        print("   Add a 'runtime.txt' file with: python-3.11.9")
         return False
 
 if __name__ == "__main__":
