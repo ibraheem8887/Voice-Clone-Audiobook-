@@ -15,7 +15,7 @@ option = st.radio(
     "Select Workflow:",
     [
         "1️⃣ Convert PDF → AI Voice",
-        "2️⃣ Convert PDF → Your Voice",
+        "2️⃣ Convert PDF → Your Voice", 
         "3️⃣ Convert Audio → Your Voice",
         "4️⃣ Full Process (PDF → AI Voice → Your Voice)"
     ]
@@ -72,16 +72,24 @@ if st.button("Start Workflow"):
                 run_script("extract_pdf_text.py", ["uploaded_book.pdf", "book_text.txt"])
             if os.path.exists("book_text.txt"):
                 run_script("convert_to_aiVoice.py")
-                if os.path.exists("book_audio.mp3"):
+                # ✅ CHECK /tmp/ INSTEAD OF CURRENT DIRECTORY
+                if os.path.exists("/tmp/book_audio.mp3"):
                     st.success("✅ AI voice conversion completed!")
-                    st.audio("book_audio.mp3")
+                    
+                    # ✅ PLAY AUDIO FROM /tmp/
+                    st.audio("/tmp/book_audio.mp3")
+                    
+                    # ✅ CREATE DOWNLOAD BUTTON FROM /tmp/
+                    with open("/tmp/book_audio.mp3", "rb") as f:
+                        audio_data = f.read()
                     st.download_button(
                         "Download AI Voice Audiobook",
-                        "book_audio.mp3",
+                        audio_data,
                         "ai_voice_audiobook.mp3",
                         "audio/mp3"
                     )
-                    temp_files_to_cleanup.append("book_audio.mp3")
+                    # ✅ CLEAN UP /tmp/ FILE
+                    temp_files_to_cleanup.append("/tmp/book_audio.mp3")
 
         # -------- PDF → Your Voice --------
         if option in ["2️⃣ Convert PDF → Your Voice", "4️⃣ Full Process (PDF → AI Voice → Your Voice)"] and pdf_file and voice_file:
@@ -90,32 +98,48 @@ if st.button("Start Workflow"):
             if os.path.exists("book_text.txt"):
                 run_script("convert_to_myVoice.py")
                 run_script("merge_audio.py")
-                if os.path.exists("my_voice_audiobook.wav"):
+                # ✅ CHECK /tmp/ INSTEAD OF CURRENT DIRECTORY
+                if os.path.exists("/tmp/my_voice_audiobook.wav"):
                     st.success("✅ Your voice audiobook completed!")
-                    st.audio("my_voice_audiobook.wav")
+                    
+                    # ✅ PLAY AUDIO FROM /tmp/
+                    st.audio("/tmp/my_voice_audiobook.wav")
+                    
+                    # ✅ CREATE DOWNLOAD BUTTON FROM /tmp/
+                    with open("/tmp/my_voice_audiobook.wav", "rb") as f:
+                        audio_data = f.read()
                     st.download_button(
                         "Download Your Voice Audiobook",
-                        "my_voice_audiobook.wav",
+                        audio_data,
                         "my_voice_audiobook.wav",
                         "audio/wav"
                     )
-                    temp_files_to_cleanup.append("my_voice_audiobook.wav")
+                    # ✅ CLEAN UP /tmp/ FILE
+                    temp_files_to_cleanup.append("/tmp/my_voice_audiobook.wav")
 
         # -------- Audio → Your Voice --------
         if option == "3️⃣ Convert Audio → Your Voice" and audio_file and voice_file:
             run_script("audio_to_text.py", ["input_audio.wav"])
             run_script("convert_to_myVoice.py")
             run_script("merge_audio.py")
-            if os.path.exists("my_voice_audiobook.wav"):
+            # ✅ CHECK /tmp/ INSTEAD OF CURRENT DIRECTORY
+            if os.path.exists("/tmp/my_voice_audiobook.wav"):
                 st.success("✅ Your voice audiobook completed!")
-                st.audio("my_voice_audiobook.wav")
+                
+                # ✅ PLAY AUDIO FROM /tmp/
+                st.audio("/tmp/my_voice_audiobook.wav")
+                
+                # ✅ CREATE DOWNLOAD BUTTON FROM /tmp/
+                with open("/tmp/my_voice_audiobook.wav", "rb") as f:
+                    audio_data = f.read()
                 st.download_button(
                     "Download Your Voice Audiobook",
-                    "my_voice_audiobook.wav",
+                    audio_data,
                     "my_voice_audiobook.wav",
                     "audio/wav"
                 )
-                temp_files_to_cleanup.append("my_voice_audiobook.wav")
+                # ✅ CLEAN UP /tmp/ FILE
+                temp_files_to_cleanup.append("/tmp/my_voice_audiobook.wav")
 
         # Clean temporary input files (keep directories)
         temp_files_to_cleanup.extend(["uploaded_book.pdf", "input_audio.wav"])
@@ -128,5 +152,10 @@ if st.button("Start Workflow"):
 # Start Over
 # ----------------------------
 if st.button("Start Over"):
-    cleanup_temp_files(["uploaded_book.pdf", "book_text.txt", "book_audio.mp3", "my_voice_audiobook.wav", "input_audio.wav"])
-    st.experimental_rerun()
+    # ✅ CLEAN UP /tmp/ FILES TOO
+    cleanup_temp_files([
+        "uploaded_book.pdf", "book_text.txt", 
+        "/tmp/book_audio.mp3", "/tmp/my_voice_audiobook.wav", 
+        "input_audio.wav"
+    ])
+    st.rerun()
