@@ -1,7 +1,3 @@
-# file: pdf_to_text.py
-# Required package: PyPDF2
-# pip install PyPDF2
-
 import sys
 import PyPDF2
 
