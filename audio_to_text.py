@@ -1,3 +1,4 @@
+# audio_to_text.py (Cloud + Streamlit friendly)
 import os
 import tempfile
 import speech_recognition as sr
@@ -15,22 +16,21 @@ def audio_to_text(audio_file, output_txt=None, chunk_length_ms=60000):
     if output_txt is None:
         output_txt = os.path.join(tempfile.gettempdir(), "book_text.txt")
 
-    temp_wav = None   # ✅ Ensure always defined
-
+    temp_wav = None  # ensure defined
     try:
-        # ✅ Convert input audio to mono 16kHz WAV
+        # ✅ Normalize input to mono 16kHz WAV
         sound = AudioSegment.from_file(audio_file)
         sound = sound.set_frame_rate(16000).set_channels(1)
 
-        # ✅ Split into proper time chunks
+        # ✅ Properly split audio into chunks
         chunks = make_chunks(sound, chunk_length_ms)
 
         text_result = []
         temp_wav = os.path.join(tempfile.gettempdir(), "temp_chunk.wav")
 
         for i, chunk in enumerate(chunks):
-            # Export each chunk to temp WAV
             chunk.export(temp_wav, format="wav")
+
             with sr.AudioFile(temp_wav) as source:
                 audio = recognizer.record(source)
 
@@ -45,7 +45,7 @@ def audio_to_text(audio_file, output_txt=None, chunk_length_ms=60000):
 
         full_text = "\n".join(text_result)
 
-        # ✅ Save transcription
+        # ✅ Save to file
         with open(output_txt, "w", encoding="utf-8") as f:
             f.write(full_text)
 
@@ -61,5 +61,5 @@ def audio_to_text(audio_file, output_txt=None, chunk_length_ms=60000):
         return None
 
     finally:
-        if temp_wav and os.path.exists(temp_wav):  # ✅ Cleanup
+        if temp_wav and os.path.exists(temp_wav):  # safe cleanup
             os.remove(temp_wav)
